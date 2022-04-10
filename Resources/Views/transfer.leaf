@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+  <title>Transfer Center</title>
+</head>
+
+<body>
+#if(transParam.hideInput):
+    <div style="display:none">
+#else:
+    <div>
+#endif
+        <form action="/transfer" method="post">
+            <textarea name="message" rows="10" placeholder="粘贴或输入" style="width:%100"></textarea>
+            <input type="submit" value="Done"/>
+        </form>
+        
+        <form action="/transfer" method="post" enctype="multipart/form-data">
+            <input type="file" name="file">
+            <input type="submit" value="Done"/>
+        </form>
+    </div>
+    
+
+    <div style="padding:16">
+        #for(transfer in transParam.transfers):
+            #if(transfer.type == "message"):
+                <h3>信息</h3>
+                <p>#(transfer.content)</p>
+            #else:
+                <h3>文件</h3>
+                #if(transfer.isImage):
+                    <a href="#(transfer.content)" target="_blank">
+                        <p>#(transfer.name)</p>
+                        <img src="#(transfer.content)" width="300"/>
+                    </a>
+                #else:
+                    <a href="#(transfer.content)">#(transfer.content)</a>
+                #endif
+            #endif
+            </br>
+        #endfor
+    </div>
+    <div>
+        <form action="/transfer/delete" method="POST">
+            <input type="submit" value="Clean"/>
+        </form> 
+    </div>
+</body>
+</html>
