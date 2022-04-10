@@ -8,6 +8,7 @@
 
 <body>
   <h1>#(title)</h1>
+  <a href="transfer">多设备数据中转服务</a>
 </body>
 
 </html>

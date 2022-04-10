@@ -11,7 +11,7 @@ struct TransferController: RouteCollection {
 
     func index(req: Request) async throws -> View {
         let tranfers = try await Transfer.query(on: req.db).all()
-        return try await req.view.render("transfer", ["transParam": TransferParam(transfers: tranfers)])
+        return try await req.view.render("transfer", ["transParam": TransferParam(transfers: tranfers.reversed())])
     }
 
     func create(req: Request) async throws -> View {
@@ -40,22 +40,26 @@ struct TransferController: RouteCollection {
 
             let transfer = Transfer(type: TransferType.fileType, content: fileName, isImage: isImage, name: file.filename)
             try await transfer.save(on: req.db)
-            return try await req.view.render("transfer", ["transParam": TransferParam(transfers: [transfer], hideInput: true)])
+            return try await index(req: req)
         } else if let msg = newTransfer.message {
             let transfer = Transfer(type: TransferType.msgType, content: msg)
             try await transfer.save(on: req.db)
-            return try await req.view.render("transfer", ["transParam": TransferParam(transfers: [transfer], hideInput: true)])
+            return try await index(req: req)
         } else {
             throw Abort(.badRequest)
         }         
     }
 
-    func delete(req: Request) async throws -> HTTPStatus {
+    func delete(req: Request) async throws -> View {
         let tranfers = try await Transfer.query(on: req.db).all()
         for tran in tranfers {
             print("deleting \(tran.id?.uuidString ?? "") \(tran.content)")
+            if tran.type == TransferType.fileType {
+                let url = URL(fileURLWithPath: req.application.directory.publicDirectory + tran.content);
+                try FileManager.default.removeItem(at: url)
+            }
             try await tran.delete(force: true, on: req.db)
         }
-        return .ok
+        return try await index(req: req)
     }
 }

@@ -5,48 +5,70 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
   <title>Transfer Center</title>
+
+  <style>
+    .subcontainer {
+        background-color:#93B7BE; 
+        width:600px; 
+        padding:16px;
+        color:#DB8A74;
+        border-radius:8px;
+        font-family:Monospace;
+    }
+  </style>
 </head>
 
 <body>
-#if(transParam.hideInput):
-    <div style="display:none">
-#else:
-    <div>
-#endif
-        <form action="/transfer" method="post">
-            <textarea name="message" rows="10" placeholder="粘贴或输入" style="width:%100"></textarea>
-            <input type="submit" value="Done"/>
-        </form>
-        
-        <form action="/transfer" method="post" enctype="multipart/form-data">
-            <input type="file" name="file">
-            <input type="submit" value="Done"/>
-        </form>
-    </div>
-    
+    <div class="subcontainer">
+        #if(transParam.hideInput):
+            <div style="display:none">
+        #else:
+            <div>
+        #endif
+            <h3>文本内容</h3>
+            <form action="/transfer" method="post">
+                <textarea name="message" rows="10" placeholder="粘贴或输入" style="width:100%;"></textarea>
+                <input type="submit" value="发布"/>
+            </form>
+            </br>
 
-    <div style="padding:16">
+            <h3>文件内容</h3>
+            <form action="/transfer" method="post" enctype="multipart/form-data">
+                <input type="file" name="file">
+                <input type="submit" value="发布"/>
+            </form>
+        </div>
+    </div>
+
+    </br>
+
+    <div class="subcontainer">
         #for(transfer in transParam.transfers):
             #if(transfer.type == "message"):
-                <h3>信息</h3>
-                <p>#(transfer.content)</p>
+                <div style="background-color:#B7D1DA; border-radius:8px; padding:16px;">
+                    <p>#(transfer.content)</p>
+                </div>                
             #else:
-                <h3>文件</h3>
-                #if(transfer.isImage):
-                    <a href="#(transfer.content)" target="_blank">
-                        <p>#(transfer.name)</p>
-                        <img src="#(transfer.content)" width="300"/>
-                    </a>
-                #else:
-                    <a href="#(transfer.content)">#(transfer.content)</a>
-                #endif
+                <div style="background-color:#697268; border-radius:8px; padding:16px;">
+                    #if(transfer.isImage):
+                        <a href="#(transfer.content)" target="_blank">
+                            <p>#(transfer.name)</p>
+                            <img src="#(transfer.content)" width="100%"/>
+                        </a>
+                    #else:
+                        <a href="#(transfer.content)">#(transfer.content)</a>
+                    #endif
+                </div>
             #endif
             </br>
         #endfor
     </div>
-    <div>
+    
+    </br>
+
+    <div class="subcontainer">
         <form action="/transfer/delete" method="POST">
-            <input type="submit" value="Clean"/>
+            <input type="submit" value="清除所有"/>
         </form> 
     </div>
 </body>
