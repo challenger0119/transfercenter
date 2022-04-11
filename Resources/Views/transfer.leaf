@@ -45,8 +45,9 @@
     <div class="subcontainer">
         #for(transfer in transParam.transfers):
             #if(transfer.type == "message"):
-                <div style="background-color:#B7D1DA; border-radius:8px; padding:16px;">
-                    <p style="white-space:pre-wrap;">#(transfer.content)</p>
+                <div style="background-color:#B7D1DA; border-radius:8px; padding:16px;" >
+                    <p style="white-space:pre-wrap;" onclick="execClick();" oncopy="execCopy(event,this);">#(transfer.content)</p>
+                    <i>Tips:点击复制</i>
                 </div>                
             #else:
                 <div style="background-color:#697268; border-radius:8px; padding:16px;">
@@ -71,5 +72,20 @@
             <input type="submit" value="清除所有"/>
         </form> 
     </div>
+
+    <script class="text/javascript">
+        function execClick(){
+            document.execCommand("copy");
+        }
+
+        function execCopy(event,thisDiv){
+            event.preventDefault();
+            <!-- 该方案在iOS不行 -->
+            if (event.clipboardData) {
+                event.clipboardData.setData("text/plain", thisDiv.textContent);
+                alert("已复制到剪切板");
+            }
+        }
+    </script>
 </body>
 </html>
