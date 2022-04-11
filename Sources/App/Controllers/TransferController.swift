@@ -10,11 +10,11 @@ struct TransferController: RouteCollection {
     }
 
     func index(req: Request) async throws -> View {
-        let tranfers = try await Transfer.query(on: req.db).all()
-        return try await req.view.render("transfer", ["transParam": TransferParam(transfers: tranfers.reversed())])
+        let transfers = try await Transfer.query(on: req.db).all()
+        return try await req.view.render("transfer", ["transParam": TransferParam(transfers: transfers.reversed())])
     }
 
-    func create(req: Request) async throws -> View {
+    func create(req: Request) async throws -> Response {
         let newTransfer = try req.content.decode(NewTransfer.self)
         if let file = newTransfer.file {
 
@@ -40,26 +40,25 @@ struct TransferController: RouteCollection {
 
             let transfer = Transfer(type: TransferType.fileType, content: fileName, isImage: isImage, name: file.filename)
             try await transfer.save(on: req.db)
-            return try await index(req: req)
+            return req.redirect(to: "/transfer")
         } else if let msg = newTransfer.message {
             let transfer = Transfer(type: TransferType.msgType, content: msg)
             try await transfer.save(on: req.db)
-            return try await index(req: req)
+            return req.redirect(to: "/transfer")
         } else {
             throw Abort(.badRequest)
         }         
     }
 
-    func delete(req: Request) async throws -> View {
-        let tranfers = try await Transfer.query(on: req.db).all()
-        for tran in tranfers {
-            print("deleting \(tran.id?.uuidString ?? "") \(tran.content)")
+    func delete(req: Request) async throws -> Response {
+        let transfers = try await Transfer.query(on: req.db).all()
+        for tran in transfers {
             if tran.type == TransferType.fileType {
                 let url = URL(fileURLWithPath: req.application.directory.publicDirectory + tran.content);
                 try FileManager.default.removeItem(at: url)
             }
             try await tran.delete(force: true, on: req.db)
         }
-        return try await index(req: req)
+        return req.redirect(to: "/transfer")
     }
 }

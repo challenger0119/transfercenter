@@ -9,9 +9,9 @@
   <style>
     .subcontainer {
         background-color:#93B7BE; 
-        width:600px; 
         padding:16px;
         color:#DB8A74;
+        max-width:600px;
         border-radius:8px;
         font-family:Monospace;
     }
@@ -46,17 +46,17 @@
         #for(transfer in transParam.transfers):
             #if(transfer.type == "message"):
                 <div style="background-color:#B7D1DA; border-radius:8px; padding:16px;">
-                    <p>#(transfer.content)</p>
+                    <p style="white-space:pre-wrap;">#(transfer.content)</p>
                 </div>                
             #else:
                 <div style="background-color:#697268; border-radius:8px; padding:16px;">
                     #if(transfer.isImage):
                         <a href="#(transfer.content)" target="_blank">
-                            <p>#(transfer.name)</p>
+                            <p style="white-space:pre-wrap;">#(transfer.name)</p>
                             <img src="#(transfer.content)" width="100%"/>
                         </a>
                     #else:
-                        <a href="#(transfer.content)">#(transfer.content)</a>
+                        <a href="#(transfer.content)" target="_blank">#(transfer.content)</a>
                     #endif
                 </div>
             #endif
